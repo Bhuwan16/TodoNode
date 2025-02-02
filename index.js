@@ -8,7 +8,7 @@ const port = 3000;
 const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-mongoose.connect('mongodb://localhost:27017/TODO_express', {useNewUrlParser: true});
+mongoose.connect(`${process.env.MONGO_CONNECT}`, {useNewUrlParser: true});
 
 const itemSchema = new mongoose.Schema({
     name: String,
