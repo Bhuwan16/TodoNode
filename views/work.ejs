@@ -1,6 +1,5 @@
 <%- include('partials/header.ejs') %>
 
-    <!-- This section constitutes the main content of the webpage -->
     <div id="displayTextOuterDiv">
         <div id="displayTextInnerDiv">
             <%= locals.displayText %>
@@ -17,6 +16,7 @@
                                 <label id="todayItem<%= i %>Label" for="todayItem<%= i %>" class="form-check-label" style="word-break: break-word;">
                                     <%= locals.data[i].name %>
                                 </label>
+                                <button type="button" class="btn btn-warning btn-sm ms-2" onclick="editItem('<%= data[i]._id.toString() %>', '<%= JSON.stringify(data[i].name) %>')">Edit</button>
                                 <input type="hidden" name="listType" value="workList">
                             </li>
                         </form>
@@ -26,17 +26,26 @@
         </div>
         <div class="addItemDiv">
             <form action="/add" method="POST" id="addItemForm">
-                <input type="text" name="addWorkItem" id="addWorkItem">
+                <input type="text" name="addWorkItem" id="addWorkItem" placeholder="Enter item here" required>
                 <button type="submit" class="btn btn-primary">Add Item</button>
                 <input type="hidden" name="listType" value="workList"></input>
+                <input type="hidden" name="itemId" id="itemId" value="">
             </form>
         </div>
     </main>
 
-    <!-- This section constitutes the footer of the webpage -->
     <footer>
 
     </footer>
+
+    <script>
+    function editItem(itemId, itemName) {
+        document.getElementById('addWorkItem').value = itemName;
+        
+        document.getElementById('itemId').value = itemId;
+    }
+</script>
+
     <script src="scripts/today.js"></script>
     </body>
 

@@ -8,7 +8,7 @@ const port = 3000;
 const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-mongoose.connect(`${process.env.MONGO_CONNECT}`, {useNewUrlParser: true});
+mongoose.connect('mongodb://localhost:27017/TODO_express', {useNewUrlParser: true});
 
 const itemSchema = new mongoose.Schema({
     name: String,
@@ -75,7 +75,7 @@ app.get("/work", async (req, res) => {
     }
 });
 
-app.post("/add", async (req, res) => {
+/* app.post("/add", async (req, res) => {
     if(req.body.listType === "todayList") {
         const itemSubmit = new Item({
             name: req.body.addTodayItem,
@@ -90,7 +90,42 @@ app.post("/add", async (req, res) => {
         await itemSubmit.save();
         res.redirect("/work");
     }
+}); */
+
+app.post("/add", async (req, res) => {
+    
+    let itemText = req.body.addTodayItem;  
+    
+    if (typeof itemText === 'undefined')
+        itemText = req.body.addWorkItem;
+
+    const itemId = req.body.itemId;  
+
+    if (itemId) {
+        if (req.body.listType === "todayList") {
+            await Item.findByIdAndUpdate(itemId, { name: itemText });
+            res.redirect("/");
+        } else {
+            await WorkItem.findByIdAndUpdate(itemId, { name: itemText });
+            res.redirect("/work");
+        }
+    } else {
+        if (req.body.listType === "todayList") {
+            const itemSubmit = new Item({
+                name: itemText,
+            });
+            await itemSubmit.save();
+            res.redirect("/");  
+        } else {
+            const itemSubmit = new WorkItem({
+                name: itemText,
+            });
+            await itemSubmit.save();
+            res.redirect("/work");  
+        }
+    }
 });
+
 
 app.post("/delete", async (req, res) => {
     const id = req.body.checkbox;
@@ -103,6 +138,8 @@ app.post("/delete", async (req, res) => {
         res.redirect("/work");
     }
 });
+
+
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
